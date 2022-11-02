@@ -1,4 +1,5 @@
 # git remote add origin https://github.com/CatiorroPorgramador/Shoot-Now-Update.git
+# git commit -m "v(version)"
 # git branch -M main
 # git push -u origin main
 '''
@@ -41,8 +42,10 @@ def gameplay() -> None:
     # Others...
     zom_spw_idx:int = 0 # Zombie Spawner Index
 
+    frame_gun:pygame.Surface = pygame.image.load('data/ui/frame.png').convert_alpha()
+    frame_gun = pygame.transform.scale(frame_gun, (64, 64))
+
     # Init
-    new_zom = zombie_class(zombie_group)
 
     # Loop
     while True:
@@ -68,6 +71,8 @@ def gameplay() -> None:
         zombie_group.draw(display)
 
         # Interface
+        display.blit(frame_gun, (10, 10))
+        display.blit(frame_gun, (74, 10))
 
         # Update
         player_group.update()
@@ -86,11 +91,17 @@ def gameplay() -> None:
             zom_spw_idx = 0
         
         # Collisions
-        zom_sht_col = pygame.sprite.groupcollide(zombie_group, player_shot_group, True, True, pygame.sprite.collide_rect)
-        zom_ply_col = pygame.sprite.groupcollide(zombie_group, player_group, True, False, pygame.sprite.collide_mask)
+        zom_sht_col = pygame.sprite.groupcollide(zombie_group, player_shot_group, False, True, pygame.sprite.collide_rect)
+        zom_ply_col = pygame.sprite.groupcollide(zombie_group, player_group, False, False, pygame.sprite.collide_mask)
         
         if zom_ply_col:
-            print(zom_ply_col)
+            for zom in zom_ply_col:
+                player.life -= zom.damage
+                zom.vec[0] += -10
+        
+        if zom_sht_col:
+            for zom in zom_sht_col:
+                zom.life -= player.cur_gun['damage']
 
         pygame.display.update()
 

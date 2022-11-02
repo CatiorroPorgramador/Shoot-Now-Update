@@ -37,6 +37,7 @@ class zombie_class(pygame.sprite.Sprite):
         self.shot_group:pygame.sprite.AbstractGroup
 
         self.tmp:list = []
+        self.vec = [0, 0]
 
         # Change Type
         self.type:dict
@@ -55,6 +56,7 @@ class zombie_class(pygame.sprite.Sprite):
 
         self.life = self.type['life']
         self.speed = self.type['speed']
+        self.vec[0] = self.speed
         self.damage = self.type['damage']
         self.id = type_id
 
@@ -65,18 +67,24 @@ class zombie_class(pygame.sprite.Sprite):
             self.shoot_sound = pygame.mixer.Sound('data/sounds/glock_shoot_sound.wav')
 
     def update(self, *args, **kwargs) -> None:
-        self.rect.x += self.speed
+        self.rect.x += self.vec[0]
+        if self.vec[0] != self.speed:
+            self.vec[0] += 1
 
         if self.id == 2:
             self.tmp[0] += int(self.tmp[1])
 
             if self.rect.x >= 200:
                 self.speed = 0
+                self.vec[0] = 0
                 self.tmp[1] = True
             
             if self.tmp[0] > 60:
                 self.shoot()
                 self.tmp[0] = 0
+        
+        if self.life <= 0:
+            self.kill()
 
     def shoot(self):  # Zombie Shot Group != Player Shot Group
         new_shot = shot_class(self.shot_group)

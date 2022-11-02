@@ -13,6 +13,7 @@ class player_class(pygame.sprite.Sprite):
         self.rect = pygame.Rect(600, 268, 64, 64)
         self.speed = 4
         self.life = 100
+        self.shoot_sound:pygame.mixer.Sound = None
 
         self.guns = {
             'glock': {
@@ -35,7 +36,7 @@ class player_class(pygame.sprite.Sprite):
                 'frame': 2,
                 'damage': 1,
                 'max-ammo': 45,
-                'speed': 25,
+                'speed': -25,
                 'sleep': 5,
                 'sound': 0,
             },
@@ -49,21 +50,21 @@ class player_class(pygame.sprite.Sprite):
             }
         }
 
-        self.cur_gun = self.guns['glock']
-        self.gun_spritesheet = spritesheet('./data/guns-spritesheet.png')
-
-        self.can_shoot:bool = False
-        self.index_shoot:int = 0
-
         # Sounds
         self.shoot_sounds:list = [
-            pygame.mixer.Sound('data/sounds/glock_shoot_sound.wav')
+            pygame.mixer.Sound('data/sounds/glock_shoot_sound.wav'),
+            pygame.mixer.Sound('data/sounds/uzi_shoot_sound.wav')
         ]
-        self.shoot_sound:pygame.mixer.Sound = None
 
-        # Init
+        self.cur_gun = self.guns['uzi']
+        self.gun_spritesheet = spritesheet('./data/guns-spritesheet.png')
         self.shoot_sound = self.shoot_sounds[self.cur_gun['sound']]
 
+        self.can_shoot:bool = False
+        self.can_kick:bool = False
+        self.index_shoot:int = 0
+
+        # Init
     
     def update(self, *args, **kwargs) -> None:
         keys = pygame.key.get_pressed()
