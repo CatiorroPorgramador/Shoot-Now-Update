@@ -10,19 +10,19 @@ class zombie_class(pygame.sprite.Sprite):
         type_ids = [
             { # Simple Zombie
                 'texture': './data/zombies/simple-zombie-spritesheet.png',
-                'life': 1,
+                'life': 2,
                 'speed': 2,
                 'damage': 15
             },
             { # Runner Zombie
                 'texture': './data/zombies/runner-zombie-spritesheet.png',
-                'life': 1,
+                'life': 2,
                 'speed': 4,
                 'damage': 20
             },
             { # Gangster Zombie
                 'texture': './data/zombies/shooter-zombie-spritesheet.png',
-                'life': 2,
+                'life': 4,
                 'speed': 1,
                 'damage': 15,
             }

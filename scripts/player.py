@@ -10,9 +10,10 @@ class player_class(pygame.sprite.Sprite):
         self.image = pygame.image.load('./data/player/player-spritesheet.png').convert_alpha()
         self.image = pygame.transform.scale(self.image, [64, 64])
         
-        self.rect = pygame.Rect(600, 268, 64, 64)
-        self.speed = 4
-        self.life = 100
+        self.rect:pygame.Rect = pygame.Rect(600, 268, 64, 64)
+        self.speed:int = 4
+        self.life:int = 100
+        self.kills:int = 0 ; self.coins:int = 0
         self.shoot_sound:pygame.mixer.Sound = None
 
         self.guns = {
@@ -22,7 +23,7 @@ class player_class(pygame.sprite.Sprite):
                 'max-ammo': 12,
                 'speed': -25,
                 'sleep': 20,
-                'sound': 0,
+                'sound': 'data/sounds/glock_shoot_sound.wav',
             },
             'parafal': {
                 'frame': 1,
@@ -30,35 +31,30 @@ class player_class(pygame.sprite.Sprite):
                 'max-ammo': 20,
                 'speed': -35,
                 'sleep': 10,
-                'sound': 0,
+                'sound': 'data/sounds/glock_shoot_sound.wav',
             },
             'uzi': {
                 'frame': 2,
-                'damage': 1,
+                'damage': 0.5,
                 'max-ammo': 45,
                 'speed': -25,
                 'sleep': 5,
-                'sound': 0,
+                'sound': 'data/sounds/uzi_shoot_sound.wav',
             },
             'revolver': {
                 'frame': 3,
-                'damage': 2.5,
+                'damage': 3,
                 'max-ammo': 6,
                 'speed': -20,
                 'sleep': 30,
-                'sound': 0,
+                'sound': 'data/sounds/glock_shoot_sound.wav',
             }
         }
 
         # Sounds
-        self.shoot_sounds:list = [
-            pygame.mixer.Sound('data/sounds/glock_shoot_sound.wav'),
-            pygame.mixer.Sound('data/sounds/uzi_shoot_sound.wav')
-        ]
-
         self.cur_gun = self.guns['uzi']
         self.gun_spritesheet = spritesheet('./data/guns-spritesheet.png')
-        self.shoot_sound = self.shoot_sounds[self.cur_gun['sound']]
+        self.shoot_sound = pygame.mixer.Sound(self.cur_gun['sound'])
 
         self.can_shoot:bool = False
         self.can_kick:bool = False

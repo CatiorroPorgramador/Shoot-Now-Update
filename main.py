@@ -8,6 +8,7 @@ add new zombies
 add new guns
 add sounds
 add menu game
+add kick
 '''
 
 import pygame
@@ -20,8 +21,9 @@ from scripts.zombie import zombie_class
 pygame.init()
 
 WINDOW_NAME = 'Shoot Now 0.1'
+FONT = pygame.font.Font('data/font.ttf', 26)
 
-def menu():
+def menu() -> None:
     pass
 
 def gameplay() -> None:
@@ -56,6 +58,8 @@ def gameplay() -> None:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 exit(0)
+            if event.type == pygame.KEYDOWN:
+                pass
 
         # Draw
         display.fill([100, 100, 100])
@@ -73,6 +77,9 @@ def gameplay() -> None:
         # Interface
         display.blit(frame_gun, (10, 10))
         display.blit(frame_gun, (74, 10))
+
+        display.blit(FONT.render(f'Life: {player.life}', False, (255, 255, 255)), (150, 10))
+        display.blit(FONT.render(f'Kills: {player.kills}', False, (255, 255, 255)), (150, 40))
 
         # Update
         player_group.update()
@@ -92,16 +99,23 @@ def gameplay() -> None:
         
         # Collisions
         zom_sht_col = pygame.sprite.groupcollide(zombie_group, player_shot_group, False, True, pygame.sprite.collide_rect)
-        zom_ply_col = pygame.sprite.groupcollide(zombie_group, player_group, False, False, pygame.sprite.collide_mask)
+        zom_ply_col = pygame.sprite.groupcollide(zombie_group, player_group, False, False, pygame.sprite.collide_rect)
         
+        ply_sht_col = pygame.sprite.groupcollide(player_group, zombie_shot_group, False, True, pygame.sprite.collide_rect)
+
         if zom_ply_col:
             for zom in zom_ply_col:
                 player.life -= zom.damage
-                zom.vec[0] += -10
+                zom.vec[0] += -20
         
         if zom_sht_col:
             for zom in zom_sht_col:
+                if zom.life-player.cur_gun['damage'] <= 0:
+                    player.kills += 1
                 zom.life -= player.cur_gun['damage']
+        
+        if ply_sht_col:
+            player.life -= 20
 
         pygame.display.update()
 
