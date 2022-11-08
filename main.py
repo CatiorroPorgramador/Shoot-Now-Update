@@ -23,11 +23,19 @@ pygame.init()
 WINDOW_NAME = 'Shoot Now 0.2'
 FONT = pygame.font.Font('data/font.ttf', 26)
 
+display = pygame.display.set_mode([850, 600])
+
+def _exi() -> None:
+    pygame.quit()
+    exit(0)
+
 def menu() -> None:
-    pass
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                _exi()
 
 def gameplay() -> None:
-    display = pygame.display.set_mode([850, 600])
     pygame.display.set_caption(WINDOW_NAME)
 
     # Groups
@@ -44,6 +52,8 @@ def gameplay() -> None:
     # Others...
     zom_spw_idx:int = 0 # Zombie Spawner Index
 
+    ani_inf_idx:int = 0 # Animation Interface Index
+
     frame_gun:pygame.Surface = pygame.image.load('data/ui/frame.png').convert_alpha()
     frame_gun = pygame.transform.scale(frame_gun, (64, 64))
 
@@ -57,13 +67,15 @@ def gameplay() -> None:
         # Events
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                exit(0)
+                _exi()
+
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_1:
-                    player.id_gun = 0
+                    player.set_id_gun(0)
                     player.update_gun()
+                
                 elif event.key == pygame.K_2:
-                    player.id_gun = 1
+                    player.set_id_gun(1)
                     player.update_gun()
 
         # Draw
@@ -80,6 +92,13 @@ def gameplay() -> None:
         zombie_group.draw(display)
 
         # Interface
+        for gun in player.pgun:
+            sprite = pygame.transform.scale(player.gun_spritesheet.sprite_at(pygame.Rect(28*gun['frame'], 0, 28, 16)), (76, 52))
+            
+            display.blit(sprite, [ani_inf_idx*60-10, 20])
+            ani_inf_idx += 1
+        ani_inf_idx = 0
+
         display.blit(frame_gun, (10, 10))
         display.blit(frame_gun, (74, 10))
 
@@ -115,9 +134,9 @@ def gameplay() -> None:
         
         if zom_sht_col:
             for zom in zom_sht_col:
-                if zom.life-player.cur_gun['damage'] <= 0:
+                if zom.life-player.pgun[player.id_gun]['damage'] <= 0:
                     player.kills += 1
-                zom.life -= player.cur_gun['damage']
+                zom.life -= player.pgun[player.id_gun]['damage']
         
         if ply_sht_col:
             player.life -= 20
