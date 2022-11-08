@@ -20,7 +20,7 @@ from scripts.zombie import zombie_class
 
 pygame.init()
 
-WINDOW_NAME = 'Shoot Now 0.1'
+WINDOW_NAME = 'Shoot Now 0.2'
 FONT = pygame.font.Font('data/font.ttf', 26)
 
 def menu() -> None:
@@ -59,7 +59,12 @@ def gameplay() -> None:
             if event.type == pygame.QUIT:
                 exit(0)
             if event.type == pygame.KEYDOWN:
-                pass
+                if event.key == pygame.K_1:
+                    player.id_gun = 0
+                    player.update_gun()
+                elif event.key == pygame.K_2:
+                    player.id_gun = 1
+                    player.update_gun()
 
         # Draw
         display.fill([100, 100, 100])

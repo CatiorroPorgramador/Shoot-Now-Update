@@ -51,10 +51,16 @@ class player_class(pygame.sprite.Sprite):
             }
         }
 
+        self.id_gun:int = 0
+        self.pgun = [
+            self.guns['parafal'],
+            self.guns['glock']
+        ]
+
         # Sounds
         self.cur_gun = self.guns['uzi']
         self.gun_spritesheet = spritesheet('./data/guns-spritesheet.png')
-        self.shoot_sound = pygame.mixer.Sound(self.cur_gun['sound'])
+        self.shoot_sound = pygame.mixer.Sound(self.pgun[self.id_gun]['sound'])
 
         self.can_shoot:bool = False
         self.can_kick:bool = False
@@ -62,6 +68,10 @@ class player_class(pygame.sprite.Sprite):
 
         # Init
     
+    def update_gun(self):
+        self.cur_gun = self.guns['uzi']
+        self.shoot_sound = pygame.mixer.Sound(self.cur_gun['sound'])
+
     def update(self, *args, **kwargs) -> None:
         keys = pygame.key.get_pressed()
         
@@ -89,7 +99,7 @@ class player_class(pygame.sprite.Sprite):
             self.rect.y = 536
         
         # Gun Stuff
-        self.can_shoot = keys[pygame.K_SPACE] and self.index_shoot > self.cur_gun['sleep']
+        self.can_shoot = keys[pygame.K_SPACE] and self.index_shoot > self.pgun[self.id_gun]['sleep']
         if self.can_shoot:
             self.index_shoot = 0
         
@@ -97,15 +107,12 @@ class player_class(pygame.sprite.Sprite):
 
     def shoot(self, *shot_group: pygame.sprite.AbstractGroup):
         new_shot = shot_class(shot_group)
-        new_shot.speed = self.cur_gun['speed']
+        new_shot.speed = self.pgun[self.id_gun]['speed']
 
         new_shot.rect.y = self.rect.y + 30
         new_shot.rect.x = self.rect.x - 30
 
         self.shoot_sound.play()
-    
-    def change_gun(self, gun:dict):
-        self.cur_gun = gun
 
     def get_gun_sprite(self) -> pygame.Surface:
         return pygame.transform.scale(self.gun_spritesheet.sprite_at(pygame.Rect(28*self.cur_gun['frame'], 0, 28, 16)),
