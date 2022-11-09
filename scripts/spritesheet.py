@@ -1,4 +1,3 @@
-from email.mime import image
 import pygame
 
 class spritesheet:

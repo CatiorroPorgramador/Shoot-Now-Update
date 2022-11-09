@@ -2,6 +2,8 @@
 # git commit -m "v(version)"
 # git branch -M main
 # git push -u origin main
+# v0.0.3
+
 '''
 add ui
 add new zombies
@@ -17,6 +19,7 @@ from random import randint
 
 from scripts.player import player_class
 from scripts.zombie import zombie_class
+from scripts.item import item_class
 
 pygame.init()
 
@@ -44,6 +47,8 @@ def gameplay() -> None:
     zombie_shot_group = pygame.sprite.Group()
     zombie_group = pygame.sprite.Group()
 
+    item_group = pygame.sprite.Group()
+
     # Objects
     clock = pygame.time.Clock()
 
@@ -51,6 +56,7 @@ def gameplay() -> None:
 
     # Others...
     zom_spw_idx:int = 0 # Zombie Spawner Index
+    itm_spw_idx:int = 0 # Item Spawner Index
 
     ani_inf_idx:int = 0 # Animation Interface Index
 
@@ -91,6 +97,8 @@ def gameplay() -> None:
 
         zombie_group.draw(display)
 
+        item_group.draw(display)
+
         # Interface
         for gun in player.pgun:
             sprite = pygame.transform.scale(player.gun_spritesheet.sprite_at(pygame.Rect(28*gun['frame'], 0, 28, 16)), (76, 52))
@@ -110,9 +118,11 @@ def gameplay() -> None:
         player_shot_group.update()
         zombie_shot_group.update()
         zombie_group.update()
+        item_group.update()
         
         # Spawn
         zom_spw_idx += 1
+        itm_spw_idx += 1
 
         if zom_spw_idx > 40:
             if randint(0, 1) == 0:
@@ -121,11 +131,17 @@ def gameplay() -> None:
             
             zom_spw_idx = 0
         
+        if itm_spw_idx > 40:
+            if randint(0, 2) == 1:
+                item_class(item_group)
+            itm_spw_idx = 0
+
         # Collisions
         zom_sht_col = pygame.sprite.groupcollide(zombie_group, player_shot_group, False, True, pygame.sprite.collide_rect)
         zom_ply_col = pygame.sprite.groupcollide(zombie_group, player_group, False, False, pygame.sprite.collide_rect)
-        
-        ply_sht_col = pygame.sprite.groupcollide(player_group, zombie_shot_group, False, True, pygame.sprite.collide_rect)
+
+        ply_sht_col = pygame.sprite.groupcollide(player_group, zombie_shot_group, False, True, pygame.sprite.collide_mask)
+        ply_itm_col = pygame.sprite.groupcollide(player_group, item_group, False, True, pygame.sprite.collide_rect)
 
         if zom_ply_col:
             for zom in zom_ply_col:
