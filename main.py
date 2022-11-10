@@ -10,7 +10,8 @@ add new zombies
 add new guns
 add sounds
 add menu game
-add kick
+add items
+add death menu
 '''
 
 import pygame
@@ -112,6 +113,7 @@ def gameplay() -> None:
 
         display.blit(FONT.render(f'Life: {player.life}', False, (255, 255, 255)), (150, 10))
         display.blit(FONT.render(f'Kills: {player.kills}', False, (255, 255, 255)), (150, 40))
+        display.blit(FONT.render(f'Coins: {player.coins}', False, (255, 255, 255)), (280, 10))
 
         # Update
         player_group.update()
@@ -141,7 +143,8 @@ def gameplay() -> None:
         zom_ply_col = pygame.sprite.groupcollide(zombie_group, player_group, False, False, pygame.sprite.collide_rect)
 
         ply_sht_col = pygame.sprite.groupcollide(player_group, zombie_shot_group, False, True, pygame.sprite.collide_mask)
-        ply_itm_col = pygame.sprite.groupcollide(player_group, item_group, False, True, pygame.sprite.collide_rect)
+        
+        itm_ply_col = pygame.sprite.groupcollide(item_group, player_group, True, False, pygame.sprite.collide_rect)
 
         if zom_ply_col:
             for zom in zom_ply_col:
@@ -156,6 +159,11 @@ def gameplay() -> None:
         
         if ply_sht_col:
             player.life -= 20
+        
+        if itm_ply_col:
+            for item in itm_ply_col:
+                player.coins += item._add[0]
+                player.life += item._add[1]
 
         pygame.display.update()
 

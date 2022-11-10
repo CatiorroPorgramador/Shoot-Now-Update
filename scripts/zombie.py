@@ -65,6 +65,7 @@ class zombie_class(pygame.sprite.Sprite):
             self.tmp.append(False)  # Can Shoot
 
             self.shoot_sound = pygame.mixer.Sound('data/sounds/glock_shoot_sound.wav')
+            self.shoot_sound.set_volume(0.2)
 
     def update(self, *args, **kwargs) -> None:
         self.rect.x += self.vec[0]

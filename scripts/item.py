@@ -27,7 +27,7 @@ class item_class(pygame.sprite.Sprite):
 
         self.speed:float = 5
 
-        self.add:list = []  # 0 - coin / 0 - health
+        self._add:list = []  # 0 - coin / 0 - health
         self.stop_y = randint(0, 568)
 
         # Init
@@ -35,6 +35,7 @@ class item_class(pygame.sprite.Sprite):
 
         self.image = pygame.transform.scale(self.texture.sprite_at(pygame.Rect(16*self.type['frame'], 0, 16, 16)),
         [32, 32]).convert_alpha()
+        self._add = self.type['add']
     
     def update(self, *args, **kwargs) -> None:
         if self.rect.y <= self.stop_y:
