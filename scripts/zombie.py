@@ -35,6 +35,7 @@ class zombie_class(pygame.sprite.Sprite):
         self.damage:int
         self.id:int
         self.shot_group:pygame.sprite.AbstractGroup
+        self.onready:bool = False
 
         self.tmp:list = []
         self.vec = [0, 0]
@@ -86,6 +87,12 @@ class zombie_class(pygame.sprite.Sprite):
         
         if self.life <= 0:
             self.kill()
+        
+        if self.rect.x >= 0:
+            self.onready = True
+        
+        if self.rect.x <= 0 and self.onready:
+            self.rect.x = 0
 
     def shoot(self):  # Zombie Shot Group != Player Shot Group
         new_shot = shot_class(self.shot_group)

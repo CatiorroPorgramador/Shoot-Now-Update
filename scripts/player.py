@@ -24,14 +24,16 @@ class player_class(pygame.sprite.Sprite):
                 'speed': -25,
                 'sleep': 20,
                 'sound': 0,
+                'position': [0, 30]
             },
             'parafal': {
                 'frame': 1,
-                'damage': 2,
+                'damage': 3,
                 'max-ammo': 20,
                 'speed': -35,
                 'sleep': 10,
-                'sound': 0,
+                'sound': 'data/sounds/glock_shoot_sound.wav',
+                'position': [52, 28]
             },
             'uzi': {
                 'frame': 2,
@@ -40,6 +42,7 @@ class player_class(pygame.sprite.Sprite):
                 'speed': -25,
                 'sleep': 5,
                 'sound': 1,
+                'position': [2, 28]
             },
             'revolver': {
                 'frame': 3,
@@ -47,19 +50,32 @@ class player_class(pygame.sprite.Sprite):
                 'max-ammo': 6,
                 'speed': -20,
                 'sleep': 30,
-                'sound': 0,
+                'sound': 2,
+                'position': [0, 30]
+            },
+            'm16': {
+                'frame': 4,
+                'damage': 2,
+                'max-ammo': 30,
+                'speed': -30,
+                'sleep': 6,
+                'sound': 3,
+                'position': [52, 28]
             }
         }
 
         self.id_gun:int = 0
         self.pgun = [
-            self.guns['glock'],
+            self.guns['m16'],
+            self.guns['glock']
         ]
 
         # Sounds
         self.sounds = [
             pygame.mixer.Sound('data/sounds/glock_shoot_sound.wav'),
-            pygame.mixer.Sound('data/sounds/uzi_shoot_sound.wav')
+            pygame.mixer.Sound('data/sounds/uzi_shoot_sound.wav'),
+            pygame.mixer.Sound('data/sounds/revolver_shoot_sound.wav'),
+            pygame.mixer.Sound('data/sounds/m16_shoot_sound.wav')
         ]
 
         for sound in self.sounds:
@@ -118,8 +134,8 @@ class player_class(pygame.sprite.Sprite):
         new_shot = shot_class(shot_group)
         new_shot.speed = self.pgun[self.id_gun]['speed']
 
-        new_shot.rect.y = self.rect.y + 30
-        new_shot.rect.x = self.rect.x - 30
+        new_shot.rect.x = self.rect.x - self.pgun[self.id_gun]['position'][0]
+        new_shot.rect.y = self.rect.y + self.pgun[self.id_gun]['position'][1]
 
         self.shoot_sound.play()
 
