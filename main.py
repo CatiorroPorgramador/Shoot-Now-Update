@@ -5,14 +5,12 @@
 # v0.0.3
 
 '''
-add ui
-add new zombies
-add new guns
-add sounds
 add menu game
-add items
-add death menu
-'''
+add store
+add animations
+add smothed motion
+optimize
+''' 
 
 import pygame
 
@@ -68,7 +66,6 @@ def gameplay() -> None:
 
     # Loop
     while True:
-        clock.tick(60)
         pygame.display.set_caption(f'{WINDOW_NAME} - {round(clock.get_fps())} fps')
 
         # Events
@@ -164,8 +161,13 @@ def gameplay() -> None:
             for item in itm_ply_col:
                 player.coins += item._add[0]
                 player.life += item._add[1]
+                item.sound.play()
+            
+            if player.life > 100:
+                player.life = 100
 
         pygame.display.update()
+        clock.tick(60)
 
 if __name__ == '__main__':
     gameplay()
