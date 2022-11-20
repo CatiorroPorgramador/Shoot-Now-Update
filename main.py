@@ -22,7 +22,7 @@ from scripts.item import item_class
 
 pygame.init()
 
-WINDOW_NAME = 'Shoot Now 0.2'
+WINDOW_NAME = 'Shoot Now 0.3'
 FONT = pygame.font.Font('data/font.ttf', 26)
 
 display = pygame.display.set_mode([850, 600])
@@ -32,14 +32,60 @@ def _exi() -> None:
     exit(0)
 
 def menu() -> None:
+    clock = pygame.time.Clock()
+
+    options:list = ['New Game', 'Load Game', 'Settings']
+    options_r:list = [gameplay, _exi, settings]
+
+    arrow_texture:pygame.SUrface = pygame.transform.scale(pygame.image.load('data/ui/arrow.png'), (64, 64)).convert_alpha()
+    idx_arr:int = 0
+
+    # Loop
     while True:
+        # Events
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 _exi()
+            
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    _exi()
+                
+                if event.key == pygame.K_s:
+                    idx_arr += 1
+                elif event.key == pygame.K_w:
+                    idx_arr -= 1
+                
+                if event.key == pygame.K_SPACE:
+                    options_r[idx_arr]()
+        
+        # Draw
+        display.fill([255, 255, 255])
+
+        for i in range(3):
+            if i == idx_arr:
+                display.blit(FONT.render(options[i], False, (66, 135, 245)), (10, 40*i+40))
+            else:
+                display.blit(FONT.render(options[i], False, (0, 0, 0)), (10, 40*i+40))
+
+        display.blit(arrow_texture, (200, 40*idx_arr+20))
+        
+        pygame.display.update()
+        clock.tick(60)
+
+def settings() -> None:
+    # Loop
+    while True:
+        # Events
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                _exi()
+        
+        display.fill([100, 100, 100])
+    
+        pygame.display.update()
 
 def gameplay() -> None:
-    pygame.display.set_caption(WINDOW_NAME)
-
     # Groups
     player_group = pygame.sprite.Group()
     player_shot_group = pygame.sprite.Group()
@@ -165,9 +211,12 @@ def gameplay() -> None:
             
             if player.life > 100:
                 player.life = 100
+        
+        if player.life <= 0:
+            menu()
 
         pygame.display.update()
         clock.tick(60)
 
 if __name__ == '__main__':
-    gameplay()
+    menu()
