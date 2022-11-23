@@ -32,7 +32,7 @@ class player_class(pygame.sprite.Sprite):
                 'max-ammo': 20,
                 'speed': -35,
                 'sleep': 10,
-                'sound': 'data/sounds/glock_shoot_sound.wav',
+                'sound': 0,
                 'position': [52, 28]
             },
             'uzi': {
@@ -66,8 +66,8 @@ class player_class(pygame.sprite.Sprite):
 
         self.id_gun:int = 0
         self.pgun = [
-            self.guns['m16'],
-            self.guns['glock']
+            self.guns['parafal'],
+            self.guns['uzi']
         ]
 
         # Sounds

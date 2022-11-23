@@ -12,7 +12,7 @@ add smothed motion
 optimize
 ''' 
 
-import pygame
+import pygame, json
 
 from random import randint
 
@@ -22,20 +22,33 @@ from scripts.item import item_class
 
 pygame.init()
 
-WINDOW_NAME = 'Shoot Now 0.3'
+WINDOW_NAME = 'Shoot Now v0.0.3'
 FONT = pygame.font.Font('data/font.ttf', 26)
 
 display = pygame.display.set_mode([850, 600])
 
+# Functions
 def _exi() -> None:
     pygame.quit()
     exit(0)
 
+def load_json(filename:str) -> dict:
+    with open(filename) as my_json:
+        return json.load(my_json)
+
+def write_json(filename:str, data:dict) -> None:
+    file = open(filename, 'w')
+    file.write(json.dumps(data))
+    file.close()
+
+# Scenes
 def menu() -> None:
     clock = pygame.time.Clock()
 
+    tap_sound = pygame.mixer.Sound('data/sounds/tap_sound.wav')
+
     options:list = ['New Game', 'Load Game', 'Settings']
-    options_r:list = [gameplay, _exi, settings]
+    options_r:list = [gameplay, load_game, settings]
 
     arrow_texture:pygame.SUrface = pygame.transform.scale(pygame.image.load('data/ui/arrow.png'), (64, 64)).convert_alpha()
     idx_arr:int = 0
@@ -51,10 +64,13 @@ def menu() -> None:
                 if event.key == pygame.K_ESCAPE:
                     _exi()
                 
-                if event.key == pygame.K_s:
+                if event.key == pygame.K_s and idx_arr < 2:
                     idx_arr += 1
-                elif event.key == pygame.K_w:
+                    tap_sound.play()
+
+                elif event.key == pygame.K_w and idx_arr > 0:
                     idx_arr -= 1
+                    tap_sound.play()
                 
                 if event.key == pygame.K_SPACE:
                     options_r[idx_arr]()
@@ -217,6 +233,18 @@ def gameplay() -> None:
 
         pygame.display.update()
         clock.tick(60)
+
+def load_game() -> None:
+    # Loop
+    while True:
+        # Events
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                _exi()
+        
+        display.fill([100, 100, 100])
+    
+        pygame.display.update()
 
 if __name__ == '__main__':
     menu()
