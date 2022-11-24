@@ -23,6 +23,7 @@ from scripts.item import item_class
 pygame.init()
 
 WINDOW_NAME = 'Shoot Now v0.0.3'
+VOLUME = 0
 FONT = pygame.font.Font('data/font.ttf', 26)
 
 display = pygame.display.set_mode([850, 600])
