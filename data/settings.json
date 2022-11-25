@@ -1,5 +1,1 @@
-{
-    "volume": 0.5,
-    "particles enabled": true,
-    "effects enabled:": true
-}
+{"volume": 60, "effects": false}

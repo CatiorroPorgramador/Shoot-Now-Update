@@ -1,4 +1,4 @@
-import pygame
+import pygame, json
 
 from scripts.shot import shot_class
 from scripts.spritesheet import spritesheet
@@ -15,6 +15,7 @@ class player_class(pygame.sprite.Sprite):
         self.life:int = 100
         self.kills:int = 0 ; self.coins:int = 0
         self.shoot_sound:pygame.mixer.Sound = None
+        self.settings = {}
 
         self.guns = {
             'glock': {
@@ -78,9 +79,6 @@ class player_class(pygame.sprite.Sprite):
             pygame.mixer.Sound('data/sounds/m16_shoot_sound.wav')
         ]
 
-        for sound in self.sounds:
-            sound.set_volume(0.2)
-
         self.gun_spritesheet = spritesheet('./data/guns-spritesheet.png')
         self.shoot_sound = self.sounds[self.pgun[self.id_gun]['sound']]
 
@@ -88,7 +86,13 @@ class player_class(pygame.sprite.Sprite):
         self.can_kick:bool = False
         self.index_shoot:int = 0
 
-        # Init
+        # Init - Load settings
+        file = open('data/settings.json')
+        self.settings = json.load(file)
+        file.close()
+
+        for sound in self.sounds:
+            sound.set_volume(self.settings['volume']/100)
 
     def update(self, *args, **kwargs) -> None:
         keys = pygame.key.get_pressed()

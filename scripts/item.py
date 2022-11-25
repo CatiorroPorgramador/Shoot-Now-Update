@@ -1,4 +1,4 @@
-import pygame
+import pygame, json
 from scripts.spritesheet import spritesheet
 from random import randint
 
@@ -35,11 +35,14 @@ class item_class(pygame.sprite.Sprite):
 
         # Init
         self.type = self.items[randint(0, 2)]
+        self.settings = json.load(open('data/settings.json'))
 
         self.image = pygame.transform.scale(self.texture.sprite_at(pygame.Rect(16*self.type['frame'], 0, 16, 16)),
         [32, 32]).convert_alpha()
         self._add = self.type['add']
+
         self.sound = pygame.mixer.Sound(self.type['sound'])
+        self.sound.set_volume(self.settings['volume']/100)
     
     def update(self, *args, **kwargs) -> None:
         if self.rect.y <= self.stop_y:

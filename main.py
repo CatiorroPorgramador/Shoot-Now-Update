@@ -2,7 +2,7 @@
 # git commit -m "v(version)"
 # git branch -M main
 # git push -u origin main
-# v0.0.3
+# v0.0.4
 
 '''
 add menu game
@@ -22,7 +22,7 @@ from scripts.item import item_class
 
 pygame.init()
 
-WINDOW_NAME = 'Shoot Now v0.0.3'
+WINDOW_NAME = 'Shoot Now v0.0.4'
 VOLUME = 0
 FONT = pygame.font.Font('data/font.ttf', 26)
 
@@ -51,7 +51,7 @@ def menu() -> None:
     options:list = ['New Game', 'Load Game', 'Settings']
     options_r:list = [gameplay, load_game, settings]
 
-    arrow_texture:pygame.SUrface = pygame.transform.scale(pygame.image.load('data/ui/arrow.png'), (64, 64)).convert_alpha()
+    arrow_texture:pygame.Surface = pygame.transform.scale(pygame.image.load('data/ui/arrow.png'), (64, 64)).convert_alpha()
     idx_arr:int = 0
 
     # Loop
@@ -91,15 +91,61 @@ def menu() -> None:
         clock.tick(60)
 
 def settings() -> None:
+    tap_sound = pygame.mixer.Sound('data/sounds/tap_sound.wav')
+
+    settings:dict = load_json('data/settings.json')
+
+    options:list = ['volume %', 'effects']
+    options_r:list = [settings['volume'], settings['effects']]
+    idx_arr:int = 0
+
     # Loop
     while True:
         # Events
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 _exi()
-        
+            
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    data = {'volume': options_r[0], 'effects': options_r[1]}
+                    write_json('data/settings.json', data)
+
+                    menu()
+                
+                if event.key == pygame.K_s and idx_arr < 1:
+                    idx_arr += 1
+                    tap_sound.play()
+
+                elif event.key == pygame.K_w and idx_arr > 0:
+                    idx_arr -= 1
+                    tap_sound.play()
+                
+                elif event.key == pygame.K_a:
+                    if type(options_r[idx_arr]) == bool:
+                        options_r[idx_arr] = not options_r[idx_arr]
+
+                    elif type(options_r[idx_arr]) == int:
+                        options_r[idx_arr] -= 5
+                
+                elif event.key == pygame.K_d:
+                    if type(options_r[idx_arr]) == bool:
+                        options_r[idx_arr] = not options_r[idx_arr]
+
+                    elif type(options_r[idx_arr]) == int:
+                        options_r[idx_arr] += 5
+
         display.fill([100, 100, 100])
-    
+
+        # Draw
+        for i in range(2):
+            if i == idx_arr:
+                display.blit(FONT.render(f'{options[i]}: {options_r[i]}', False, (66, 135, 245)), (10, 40*i+40))
+            else:
+                display.blit(FONT.render(f'{options[i]}: {options_r[i]}', False, (0, 0, 0)), (10, 40*i+40))
+
+        display.blit(FONT.render('Press ESC to back', False, (255, 255, 255)), (10, 550))
+
         pygame.display.update()
 
 def gameplay() -> None:

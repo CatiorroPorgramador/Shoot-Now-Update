@@ -1,4 +1,4 @@
-import pygame
+import pygame, json
 
 from random import randint
 from scripts.shot import shot_class
@@ -40,6 +40,8 @@ class zombie_class(pygame.sprite.Sprite):
         self.tmp:list = []
         self.vec = [0, 0]
 
+        self.settings:dict = json.load(open('data/settings.json'))
+
         # Change Type
         self.type:dict
         type_id:int = randint(0, 10)
@@ -66,7 +68,7 @@ class zombie_class(pygame.sprite.Sprite):
             self.tmp.append(False)  # Can Shoot
 
             self.shoot_sound = pygame.mixer.Sound('data/sounds/glock_shoot_sound.wav')
-            self.shoot_sound.set_volume(0.2)
+            self.shoot_sound.set_volume(self.settings['volume']/100)
 
     def update(self, *args, **kwargs) -> None:
         self.rect.x += self.vec[0]
