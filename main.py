@@ -5,10 +5,10 @@
 # v0.0.4
 
 '''
-add menu game
-add store
+add main_menu game
+add store and inventory
 add animations
-add smothed motion
+add smothed gun motion
 optimize
 ''' 
 
@@ -42,8 +42,18 @@ def write_json(filename:str, data:dict) -> None:
     file.write(json.dumps(data))
     file.close()
 
+def create_save(coins:int, kills:int, hp:float, guns:list) -> dict:
+    save = {
+        'coins': coins,
+        'kills': kills,
+        'hp': hp,
+        'guns': guns
+    }
+
+    return save
+
 # Scenes
-def menu() -> None:
+def main_menu() -> None:
     clock = pygame.time.Clock()
 
     tap_sound = pygame.mixer.Sound('data/sounds/tap_sound.wav')
@@ -111,7 +121,7 @@ def settings() -> None:
                     data = {'volume': options_r[0], 'effects': options_r[1]}
                     write_json('data/settings.json', data)
 
-                    menu()
+                    main_menu()
                 
                 if event.key == pygame.K_s and idx_arr < 1:
                     idx_arr += 1
@@ -276,7 +286,7 @@ def gameplay() -> None:
                 player.life = 100
         
         if player.life <= 0:
-            menu()
+            main_menu()
 
         pygame.display.update()
         clock.tick(60)
@@ -294,4 +304,4 @@ def load_game() -> None:
         pygame.display.update()
 
 if __name__ == '__main__':
-    menu()
+    main_menu()
