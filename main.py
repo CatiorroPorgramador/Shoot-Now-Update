@@ -54,14 +54,14 @@ def create_save(coins:int, kills:int, hp:float, guns:list) -> dict:
 
 # Scenes
 def main_menu() -> None:
-    clock = pygame.time.Clock()
-
+    # Load 
     tap_sound = pygame.mixer.Sound('data/sounds/tap_sound.wav')
+    arrow_texture:pygame.Surface = pygame.transform.scale(pygame.image.load('data/ui/arrow.png'), (64, 64)).convert_alpha()
 
+    # Others
     options:list = ['New Game', 'Load Game', 'Settings']
     options_r:list = [gameplay, load_game, settings]
 
-    arrow_texture:pygame.Surface = pygame.transform.scale(pygame.image.load('data/ui/arrow.png'), (64, 64)).convert_alpha()
     idx_arr:int = 0
 
     # Loop
@@ -84,6 +84,7 @@ def main_menu() -> None:
                     tap_sound.play()
                 
                 if event.key == pygame.K_SPACE:
+                    tap_sound.play()
                     options_r[idx_arr]()
         
         # Draw
@@ -98,10 +99,10 @@ def main_menu() -> None:
         display.blit(arrow_texture, (200, 40*idx_arr+20))
         
         pygame.display.update()
-        clock.tick(60)
 
 def settings() -> None:
     tap_sound = pygame.mixer.Sound('data/sounds/tap_sound.wav')
+    arrow_texture:pygame.Surface = pygame.transform.scale(pygame.image.load('data/ui/arrow.png'), (64, 64)).convert_alpha()
 
     settings:dict = load_json('data/settings.json')
 
@@ -134,9 +135,11 @@ def settings() -> None:
                 elif event.key == pygame.K_a:
                     if type(options_r[idx_arr]) == bool:
                         options_r[idx_arr] = not options_r[idx_arr]
+                        tap_sound.play()
 
                     elif type(options_r[idx_arr]) == int:
                         options_r[idx_arr] -= 5
+                        tap_sound.play()
                 
                 elif event.key == pygame.K_d:
                     if type(options_r[idx_arr]) == bool:
@@ -148,6 +151,8 @@ def settings() -> None:
         display.fill([100, 100, 100])
 
         # Draw
+        display.blit(arrow_texture, (len(options[idx_arr]+str(options_r[idx_arr]))*19, idx_arr*40+20))
+
         for i in range(2):
             if i == idx_arr:
                 display.blit(FONT.render(f'{options[i]}: {options_r[i]}', False, (66, 135, 245)), (10, 40*i+40))
@@ -292,14 +297,35 @@ def gameplay() -> None:
         clock.tick(60)
 
 def load_game() -> None:
+    # Load
+    saves:dict = load_json('data/saves.json')
+    tap_sound:pygame.mixer.Sound = pygame.mixer.Sound('data/sounds/tap_sound.wav')
+
+    i=0
+    
     # Loop
     while True:
         # Events
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 _exi()
-        
+            
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    tap_sound.play()
+                    main_menu()
+        # Update
+
+        # Draw
         display.fill([100, 100, 100])
+
+        for save in saves:
+            display.blit(FONT.render(f'{save} = {saves[save]["coins"]} coins, {saves[save]["hp"]} HP', False, (0, 0, 0)), (20, i*50+10))
+            i += 1
+        
+        i = 0
+
+        display.blit(FONT.render('Press ESC to back', False, (255, 255, 255)), (10, 550))
     
         pygame.display.update()
 
